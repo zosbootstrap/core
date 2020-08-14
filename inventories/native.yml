@@ -1,8 +1,0 @@
-zsystem:
-  hosts:
-    native:
-      ansible_host: 9.26.176.105
-      ansible_port: 8122
-      ansible_sftp_extra_args: "-P 8122"
-      ansible_user: ibmuser
-      ansible_python_interpreter: /var/python27/python27/bin/python

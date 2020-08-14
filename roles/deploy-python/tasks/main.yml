@@ -1,14 +1,41 @@
 ---
 # tasks file for deploy-python
 
-- name: Create dir to store files
-  raw: mkdir -p {{ copy_dir }} {{ '; mkdir -p {0}'.format(install_dir) if install_dir != copy_dir else ''}}
+- name: Determine if python installed already
+  raw: ls {{ PYZ }}/bin 
+  register: pythondir
+  no_log: true
+  ignore_errors: True
 
-- name: Copy install files to z/OS USS
-  shell: "{{ sftp_path }} {{ ansible_user }}@{{ ansible_host }}:{{ copy_dir }} <<< $'put {{ pax_path }}/{{ python_file_name }}.pax.Z'"
-  delegate_to: localhost
+- name: Group tasks when python directory not present
+  block:
+  - name: Determine space available for install
+    raw: df -k {{ install_dir }} | tail -1
+    register: dfinstall
 
-# MSF fix the following to following IBM python install
+  - name: Determine space available for copy
+    raw: df -k {{ copy_dir }} | tail -1
+    register: dfcopy
 
-- name: Extract directory of files
-  raw: '(cd {{ install_dir }}; /bin/pax -p p -r -f {{ copy_dir }}/{{ python_file_name }}.pax.Z )'
+  - name: Check Results
+    set_fact:
+       installspace: "{{ dfinstall.stdout | regex_search('[.]*([0-9]+)/[0-9]+[.]*','\\1') }}"
+       copyspace: "{{ dfcopy.stdout | regex_search('[.]*([0-9]+)/[0-9]+[.]*','\\1') }}"
+    failed_when: installspace|int < 250000 or copyspace|int < 250000
+    delegate_to: localhost
+
+  - name: Create dir to store files
+    raw: mkdir -p {{ copy_dir }} {{ '; mkdir -p {0}'.format(install_dir) if install_dir != copy_dir else ''}}
+
+  - name: Copy install files to z/OS USS
+    shell: "{{ sftp_path }} {{ ansible_user }}@{{ ansible_host }}:{{ copy_dir }} <<< $'put {{ pax_path }}/{{ python_file_name }}.pax.Z'"
+    delegate_to: localhost
+
+  - name: Extract directory of files
+    raw: '(cd {{ install_dir }}; /bin/pax -p p -r -f {{ copy_dir }}/{{ python_file_name }}.pax.Z )'
+
+  - name: Clean up pax file
+    raw: rm {{ copy_dir }}/{{ python_file_name }}.pax.Z
+
+  when: pythondir.rc > 0
+  ignore_errors: True

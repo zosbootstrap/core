@@ -1,0 +1,12 @@
+zsystem:
+  hosts:
+    personal:
+      ansible_host: torzdt1.canlab.ibm.com
+      ansible_port: 8122
+      ansible_sftp_extra_args: "-P 8122"
+      ansible_user: ibmuser
+    build:
+      ansible_host: torzdt1.canlab.ibm.com
+      ansible_port: 7022
+      ansible_sftp_extra_args: "-P 7022"
+      ansible_user: ibmuser
