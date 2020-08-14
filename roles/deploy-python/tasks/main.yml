@@ -1,0 +1,14 @@
+---
+# tasks file for deploy-python
+
+- name: Create dir to store files
+  raw: mkdir -p {{ copy_dir }} {{ '; mkdir -p {0}'.format(install_dir) if install_dir != copy_dir else ''}}
+
+- name: Copy install files to z/OS USS
+  shell: "{{ sftp_path }} {{ ansible_user }}@{{ ansible_host }}:{{ copy_dir }} <<< $'put {{ pax_path }}/{{ python_file_name }}.pax.Z'"
+  delegate_to: localhost
+
+# MSF fix the following to following IBM python install
+
+- name: Extract directory of files
+  raw: '(cd {{ install_dir }}; /bin/pax -p p -r -f {{ copy_dir }}/{{ python_file_name }}.pax.Z )'

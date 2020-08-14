@@ -1,0 +1,45 @@
+# the root directory where Rocket Software tools are stored (bash, git, unzip, perl)
+ROCKET_TOOLS_ROOT: /usr/lpp/rsusr/ported
+ROCKET_TOOLS_PATH: '{{ROCKET_TOOLS_ROOT}}/bin'
+GIT_VER: '2.14.4'
+
+# the root directory where IBM Software tools are stored (python, java, zoau)
+IBM_TOOLS_ROOT: /usr/lpp
+PYTHON_VER: 'v3r8'
+JAVA_VER: '8.0'
+ZOAU_VER: '1.3.0'
+
+# The path to the root of the python installation
+PYTHON_ROOT: '/usr/lpp/IBM/cyp/{{PYTHON_VER}}/pyz'
+
+# system_environment holds any environment variable names and values that should be set
+# on target host during playbook
+system_environment:
+  INSTALL_PYTHON: /var/python
+  RELEASE_DIR: /var/python
+  PKGS_BASE: /var/python/pkgs
+  PYTHON_HOME: '{{ PYTHON_ROOT }}'
+  PYTHON: '{{ PYTHON_ROOT }}/bin'
+  _BPXK_AUTOCVT: ON
+  _CEE_RUNOPTS: '"FILETAG(AUTOCVT,AUTOTAG) POSIX(ON)"'
+  _TAG_REDIR_ERR: txt
+  _TAG_REDIR_IN: txt
+  _TAG_REDIR_OUT: txt
+  ROCKET_TOOLS_ROOT: '{{ ROCKET_TOOLS_ROOT }}'
+  GIT_SHELL: '{{ ROCKET_TOOLS_PATH }}/bash'
+  GIT_EXEC_PATH: '{{ ROCKET_TOOLS_ROOT }}/git-{{GIT_VER}}/libexec/git-core'
+  GIT_TEMPLATE_DIR: '{{ ROCKET_TOOLS_ROOT }}/git-{{GIT_VER}}/share/git-core/templates'
+  JAVA_HOME: '{{IBM_TOOLS_ROOT}}/java/J{{JAVA_VER}}_64'
+  PATH: '{{ ROCKET_TOOLS_ROOT }}/git-{{GIT_VER}}/bin:/bin:/var/bin:${JAVA_HOME}/bin:{{IBM_TOOLS_ROOT}}/zoau/zoau{{ZOAU_VER}}/bin:{{PYTHON_ROOT}}/bin'
+  # Java environment
+
+# vars_folder_name is the name of the folder at the root of the project
+# which contains variable files to be imported by various playbooks
+# this is done to separate variable values when they may be different between environments
+# for example:
+#  vars_files:
+#    - "{{ vars_folder_name }}/ims-dbdc.yml"
+vars_folder_name: vars_native
+
+# The API key to use for artifactory repositories
+api_key: ''

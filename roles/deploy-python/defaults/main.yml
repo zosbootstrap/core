@@ -1,0 +1,12 @@
+---
+# defaults file for deploy-python
+
+# the default python file name
+python_file_name: python-3.8.3
+
+# the directory we will copy the archive to
+copy_dir: /tmp/python/pax
+# the directory to unpack the files for install
+install_dir: /
+# the local path to sftp on Ansible host
+sftp_path: /usr/bin/sftp {{ansible_sftp_extra_args}}

@@ -1,0 +1,7 @@
+- name: Deploy python to system
+  hosts: zsystem
+  gather_facts: false
+  environment: '{{ system_environment }}'
+
+  roles:
+    - deploy-python
