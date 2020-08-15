@@ -28,6 +28,22 @@
       that:
        - dfcopyspace | int > 150000
 
+  - name: Determine space available for install
+    raw: df -k {{ install_dir }} | tail -1 
+    register: dfinstallresult
+    ignore_errors: True
+ 
+  - name: Get installspace
+    set_fact:
+      dfinstallspace: "{{ dfinstallresult.stdout | regex_search('[.]*([0-9]+)/[0-9]+[.]*','\\1') | join(' ') }}"
+    delegate_to: localhost
+
+  - name: Check space
+    assert:
+      that:
+       - dfinstallspace | int > 150000
+    delegate_to: localhost
+
   - name: Create dir to store files
     raw: mkdir -p {{ copy_dir }} {{ '; mkdir -p {0}'.format(install_dir) if install_dir != copy_dir else ''}}
 
