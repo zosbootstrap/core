@@ -4,7 +4,6 @@
 - name: Determine if python installed already
   raw: ls {{ PYZ }}/bin 
   register: pythondir
-  no_log: true
   ignore_errors: True
 
 - name: Group tasks when python directory not present
@@ -12,17 +11,22 @@
   - name: Determine space available for install
     raw: df -k {{ install_dir }} | tail -1
     register: dfinstall
+    ignore_errors: True
 
   - name: Determine space available for copy
-    raw: df -k {{ copy_dir }} | tail -1
-    register: dfcopy
-
-  - name: Check Results
+    raw: df -k {{ copy_dir }} | tail -1 
+    register: dfcopyresult
+    ignore_errors: True
+ 
+  - name: Get copyspace
     set_fact:
-       installspace: "{{ dfinstall.stdout | regex_search('[.]*([0-9]+)/[0-9]+[.]*','\\1') }}"
-       copyspace: "{{ dfcopy.stdout | regex_search('[.]*([0-9]+)/[0-9]+[.]*','\\1') }}"
-    failed_when: installspace|int < 250000 or copyspace|int < 250000
+      dfcopyspace: "{{ dfcopyresult.stdout | regex_search('[.]*([0-9]+)/[0-9]+[.]*','\\1') | join(' ') }}"
     delegate_to: localhost
+
+  - name: Check space
+    assert:
+      that:
+       - dfcopyspace | int > 150000
 
   - name: Create dir to store files
     raw: mkdir -p {{ copy_dir }} {{ '; mkdir -p {0}'.format(install_dir) if install_dir != copy_dir else ''}}
@@ -38,4 +42,3 @@
     raw: rm {{ copy_dir }}/{{ python_file_name }}.pax.Z
 
   when: pythondir.rc > 0
-  ignore_errors: True
