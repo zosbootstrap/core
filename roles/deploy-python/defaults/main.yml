@@ -4,9 +4,12 @@
 # the default python file name
 python_file_name: python-3.8.3
 
-# the directory we will copy the archive to
-copy_dir: /tmp/python/pax
-# the directory to unpack the files for install
+# the temporary directory to copy the pax file to
+tmp_pax_dir: /tmp/python/pax
+# the root directory to unpack the files for install
 install_dir: /
-# the local path to sftp on Ansible host
+# the underlying filesystem that python will unpack to
+install_filesystem: /usr/lpp/IBM
+
+# the path to sftp on Ansible host
 sftp_path: /usr/bin/sftp {{ansible_sftp_extra_args}}

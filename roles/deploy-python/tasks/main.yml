@@ -9,12 +9,12 @@
 - name: Group tasks when python directory not present
   block:
   - name: Determine space available for install
-    raw: df -k {{ install_dir }} | tail -1
+    raw: df -k {{ install_filesystem }} | tail -1
     register: dfinstall
     ignore_errors: True
 
   - name: Determine space available for copy
-    raw: df -k {{ copy_dir }} | tail -1 
+    raw: df -k {{ tmp_pax_dir }} | tail -1 
     register: dfcopyresult
     ignore_errors: True
  
@@ -29,7 +29,7 @@
        - dfcopyspace | int > 150000
 
   - name: Determine space available for install
-    raw: df -k {{ install_dir }} | tail -1 
+    raw: df -k {{ install_filesystem }} | tail -1 
     register: dfinstallresult
     ignore_errors: True
  
@@ -45,16 +45,16 @@
     delegate_to: localhost
 
   - name: Create dir to store files
-    raw: mkdir -p {{ copy_dir }} {{ '; mkdir -p {0}'.format(install_dir) if install_dir != copy_dir else ''}}
+    raw: mkdir -p {{ tmp_pax_dir }} {{ '; mkdir -p {0}'.format(install_filesystem) if install_filesystem != tmp_pax_dir else ''}}
 
   - name: Copy install files to z/OS USS
-    shell: "{{ sftp_path }} {{ ansible_user }}@{{ ansible_host }}:{{ copy_dir }} <<< $'put {{ pax_path }}/{{ python_file_name }}.pax.Z'"
+    shell: "{{ sftp_path }} {{ ansible_user }}@{{ ansible_host }}:{{ tmp_pax_dir }} <<< $'put {{ pax_path }}/{{ python_file_name }}.pax.Z'"
     delegate_to: localhost
 
   - name: Extract directory of files
-    raw: '(cd {{ install_dir }}; /bin/pax -p p -r -f {{ copy_dir }}/{{ python_file_name }}.pax.Z )'
+    raw: '(cd {{ install_dir }}; /bin/pax -p p -r -f {{ tmp_pax_dir }}/{{ python_file_name }}.pax.Z )'
 
   - name: Clean up pax file
-    raw: rm {{ copy_dir }}/{{ python_file_name }}.pax.Z
+    raw: rm {{ tmp_pax_dir }}/{{ python_file_name }}.pax.Z
 
   when: pythondir.rc > 0
