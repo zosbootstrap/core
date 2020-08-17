@@ -1,5 +1,8 @@
 ---
 # tasks file for deploy-python
+- name: print
+  debug:
+    var: install_dirs
 
 - name: Determine if python installed already
   raw: ls {{ PYZ }}/bin 
@@ -8,41 +11,26 @@
 
 - name: Group tasks when python directory not present
   block:
-  - name: Determine space available for install
-    raw: df -k {{ install_filesystem }} | tail -1
-    register: dfinstall
-    ignore_errors: True
+  - name: "Get file system for {{ tmp_pax_dir }}"
+    raw: "df -k {{ tmp_pax_dir }} | tail -1 | awk ' { print $1; }'" 
+    register: tmp_pax_dir_fs
 
-  - name: Determine space available for copy
-    raw: df -k {{ tmp_pax_dir }} | tail -1 
-    register: dfcopyresult
-    ignore_errors: True
- 
-  - name: Get copyspace
+  - name: "Get file system for {{ install_filesystem }}"
+    raw: "df -k {{ install_filesystem }} | tail -1 | awk ' { print $1; }'" 
+    register: install_filesystem_fs
+
+  - name: "Get required free space if file system same or different"
     set_fact:
-      dfcopyspace: "{{ dfcopyresult.stdout | regex_search('[.]*([0-9]+)/[0-9]+[.]*','\\1') | join(' ') }}"
+      free_space: "{{ space[ tmp_pax_dir_fs == install_filesystem_fs ] }}"
     delegate_to: localhost
 
-  - name: Check space
-    assert:
-      that:
-       - dfcopyspace | int > 150000
+  - name: print
+    debug:
+      var: free_space
 
-  - name: Determine space available for install
-    raw: df -k {{ install_filesystem }} | tail -1 
-    register: dfinstallresult
-    ignore_errors: True
- 
-  - name: Get installspace
-    set_fact:
-      dfinstallspace: "{{ dfinstallresult.stdout | regex_search('[.]*([0-9]+)/[0-9]+[.]*','\\1') | join(' ') }}"
-    delegate_to: localhost
-
-  - name: Check space
-    assert:
-      that:
-       - dfinstallspace | int > 150000
-    delegate_to: localhost
+  - name: "Check space of {{ install_dirs }}"
+    include_tasks: dfcheck.yml 
+    loop: "{{ install_dirs }}"
 
   - name: Create dir to store files
     raw: mkdir -p {{ tmp_pax_dir }} {{ '; mkdir -p {0}'.format(install_filesystem) if install_filesystem != tmp_pax_dir else ''}}

@@ -1,0 +1,16 @@
+---
+- name: Determine file system results for directory
+  raw: df -k {{ item }} | tail -1
+  register: dfitem
+  ignore_errors: True
+
+- name: Determine free space in file system, processing on localhost (no python on target system)
+  set_fact:
+    dfitemspace: "{{ dfitem.stdout | regex_search('[.]*([0-9]+)/[0-9]+[.]*','\\1') | join(' ') }}"
+  delegate_to: localhost
+
+- name: Check space is large enough
+  assert:
+    that:
+     - dfitemspace | int > free_space | int
+  delegate_to: localhost
