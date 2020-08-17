@@ -15,12 +15,9 @@ install_dirs:
   - "{{ tmp_pax_dir }}"
   - "{{ install_filesystem }}"
 
-# First space entry is if tmp_pax_dir and install_filesystem
-# are using separate file systems.
-# The second space entry is if they are the same file system 
-space:
-  - 150000
-  - 300000
+# the space required for the temporary pax file or unpacked files
+# (if both are in the same file system, this will be doubled)
+space: 250000
 
 # the path to sftp on Ansible host
 sftp_path: /usr/bin/sftp {{ansible_sftp_extra_args}}

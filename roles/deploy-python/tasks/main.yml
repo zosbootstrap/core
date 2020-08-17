@@ -1,8 +1,5 @@
 ---
 # tasks file for deploy-python
-- name: print
-  debug:
-    var: install_dirs
 
 - name: Determine if python installed already
   raw: ls {{ PYZ }}/bin 
@@ -19,14 +16,20 @@
     raw: "df -k {{ install_filesystem }} | tail -1 | awk ' { print $1; }'" 
     register: install_filesystem_fs
 
-  - name: "Get required free space if file system same or different"
+  - name: "Get required free space if file system different"
     set_fact:
-      free_space: "{{ space[ tmp_pax_dir_fs == install_filesystem_fs ] }}"
+      total_free_space: "{{ space }}"
+    delegate_to: localhost
+
+  - name: "Double space if both directories in the same file system"
+    set_fact:
+      total_free_space: "{{ total_free_space | int * 2 }}"
+    when: tmp_pax_dir_fs == install_filesystem_fs
     delegate_to: localhost
 
   - name: print
     debug:
-      var: free_space
+      var: total_free_space
 
   - name: "Check space of {{ install_dirs }}"
     include_tasks: dfcheck.yml 

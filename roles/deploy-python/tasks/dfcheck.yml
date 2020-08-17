@@ -12,5 +12,5 @@
 - name: Check space is large enough
   assert:
     that:
-     - dfitemspace | int > free_space | int
+     - dfitemspace | int > total_free_space | int
   delegate_to: localhost
