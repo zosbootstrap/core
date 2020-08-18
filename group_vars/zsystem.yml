@@ -3,7 +3,7 @@
 #Directory that various packages (pax, zip, tar) reside on the localhost to 
 #be sent to the target hosts
 #
-pkg_path: "/Users/fultonm@ca.ibm.com/Documents/Development/IBMTools"
+pkg_path: "/var/zostools"
 
 ################################################################################
 # Configure dependency installations
