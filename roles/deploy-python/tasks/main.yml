@@ -52,6 +52,9 @@
 
 - name: How to use Python
   debug:
-    msg: "Python installed at {{ PYZ }} \n Add {{ PYZ }}\/bin to your PATH to run"
+    msg: [
+         "Python installed at {{ PYZ }} ",
+         "Add {{ PYZ }}\/bin to your PATH to run"
+    ]
   delegate_to: localhost
 
