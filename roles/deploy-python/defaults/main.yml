@@ -5,19 +5,19 @@
 python_file_name: python-3.8.3
 
 # the temporary directory to copy the pax file to
-tmp_pax_dir: /tmp/python/pax
+python_pax_dir: /tmp/python/pax
 # the root directory to unpack the files for install
-install_dir: /
+python_install_dir: /
 # the underlying filesystem that python will unpack to
-install_filesystem: /usr/lpp/IBM
+python_install_fs: /usr/lpp/IBM
 
-install_dirs:
-  - "{{ tmp_pax_dir }}"
-  - "{{ install_filesystem }}"
+python_install_dirs:
+  - "{{ python_pax_dir }}"
+  - "{{ python_install_fs }}"
 
 # the space required for the temporary pax file or unpacked files
 # (if both are in the same file system, this will be doubled)
-space: 250000
+python_space: 250000
 
 # the path to sftp on Ansible host
 sftp_path: /usr/bin/sftp {{ansible_sftp_extra_args}}

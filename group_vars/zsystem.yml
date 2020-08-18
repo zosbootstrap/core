@@ -1,7 +1,9 @@
 #
-#pax_path only used on localhost
+#pkg_path
+#Directory that various packages (pax, zip, tar) reside on the localhost to 
+#be sent to the target hosts
 #
-pax_path: "/Users/fultonm@ca.ibm.com/Documents/Development/IBMTools"
+pkg_path: "/Users/fultonm@ca.ibm.com/Documents/Development/IBMTools"
 
 ################################################################################
 # Configure dependency installations

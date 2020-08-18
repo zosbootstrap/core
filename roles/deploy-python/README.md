@@ -17,7 +17,7 @@ Role Variables
 | copy_dir            | The directory on the z/OS target system to place the compressed python install archive.                                                                                                 |
 | gzip_path           | The path to gzip on z/OS target system                                                                                                                                                  |
 | install_dir         | The directory on the z/OS target system to decompress and extract the compressed python install archive                                                                                 |
-| python_file_name    | The name of the compressed python install archive placed in the _files_ folder of the role. Do not include the file extension. ( 'ææ python_release_name åå-ææ python_release_type åå') |
+| python_file_name    | The name of the python pax file in the _pkg_path_ directory. Do not include the file extension. i                                                                                       |
 | python_release_name | The base name for the archive stored in the _files_ folder of the role. (python)                                                                                                        |
 | python_release_type | The release version of python ( i.e. py36 ). Most likely the end of python_file_name after the final hyphen                                                                             |
 | sftp_path           | the absolute path to the SFTP binary on the Ansible control system.                                                                                                                     |
