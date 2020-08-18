@@ -1,7 +1,7 @@
 # core
 Core config to get an ADCD system 'up and running' (work in progress)
 
-This code will:
+This repository provides Ansible code to:
 - upload IBM python (initial prototype done)
 - upload bash
 - upload git
