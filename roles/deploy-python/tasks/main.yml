@@ -49,3 +49,9 @@
     raw: rm {{ python_pax_dir }}/{{ python_file_name }}.pax.Z
 
   when: pythondir.rc > 0
+
+- name: How to use Python
+  debug:
+    msg: "Python installed at {{ PYZ }} \n Add {{ PYZ }}\/bin to your PATH to run"
+  delegate_to: localhost
+
