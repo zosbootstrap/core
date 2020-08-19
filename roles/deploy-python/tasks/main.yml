@@ -6,6 +6,21 @@
   register: pythondir
   ignore_errors: True
 
+- name: Derive python_install_dir from PYZ
+  set_fact:
+    python_pax_file: '{{ python_file_name }}.pax.Z'
+    python_install_dir: '{{ PYZ | replace("usr/lpp/IBM/cyp/v3r8/pyz", "") }}'
+    python_install_fs: '{{ PYZ }}'
+
+- name: Set up array of directories to be used for size checks
+  set_fact:
+    python_install_dirs:
+      - "{{ python_pax_dir }}"
+      - "{{ python_install_fs }}"
+
+- name: Create python_install_fs directory
+  raw: "mkdir -p {{ python_install_fs }}"
+
 - name: Group tasks when python directory not present
   block:
   - name: "Get file system for {{ python_pax_dir }}"
@@ -14,7 +29,7 @@
 
   - name: "Get file system for {{ python_install_fs }}"
     raw: "df -k {{ python_install_fs }} | tail -1 | awk ' { print $1; }'" 
-    register: python_install_fs_fs
+    register: python_install_fs
 
   - name: "Get required free space if file system different"
     set_fact:
@@ -23,7 +38,7 @@
   - name: "Double space if both directories in the same file system"
     set_fact:
       total_free_space: "{{ total_free_space | int * 2 }}"
-    when: python_pax_dir_fs == python_install_fs_fs
+    when: python_pax_dir_fs == python_install_fs
 
   - name: print
     debug:
@@ -37,11 +52,11 @@
     raw: mkdir -p {{ python_pax_dir }} {{ '; mkdir -p {0}'.format(python_install_fs) if python_install_fs != python_pax_dir else ''}}
 
   - name: Copy install files to z/OS USS
-    shell: "{{ sftp_path }} {{ ansible_user }}@{{ ansible_host }}:{{ python_pax_dir }} <<< $'put {{ pkg_path }}/{{ python_file_name }}.pax.Z'"
+    shell: "{{ sftp_path }} {{ ansible_user }}@{{ ansible_host }}:{{ python_pax_dir }} <<< $'put {{ pkg_path }}/{{ python_pax_file }}'"
     delegate_to: localhost
 
   - name: Extract directory of files
-    raw: '(cd {{ python_install_dir }}; /bin/pax -p p -r -f {{ python_pax_dir }}/{{ python_file_name }}.pax.Z )'
+    raw: '(cd {{ python_install_dir }}; /bin/pax -p p -r -f {{ python_pax_dir }}/{{ python_pax_file }} )'
 
   - name: Clean up pax file
     raw: rm {{ python_pax_dir }}/{{ python_file_name }}.pax.Z
