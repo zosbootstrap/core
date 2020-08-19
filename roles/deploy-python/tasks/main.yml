@@ -19,13 +19,11 @@
   - name: "Get required free space if file system different"
     set_fact:
       total_free_space: "{{ python_space }}"
-    delegate_to: localhost
 
   - name: "Double space if both directories in the same file system"
     set_fact:
       total_free_space: "{{ total_free_space | int * 2 }}"
     when: python_pax_dir_fs == python_install_fs_fs
-    delegate_to: localhost
 
   - name: print
     debug:
@@ -56,5 +54,4 @@
          "Python installed at {{ PYZ }} ",
          "Add {{ PYZ }}\/bin to your PATH to run"
     ]
-  delegate_to: localhost
 
