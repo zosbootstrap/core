@@ -1,0 +1,72 @@
+---
+# tasks file for deploy-zoau
+
+- name: Determine if zoau installed already
+  raw: ls {{ ZOAU }}/bin 
+  register: zoaudir
+  ignore_errors: True
+
+- name: Derive zoau_install_dir from ZOAU
+  set_fact:
+    zoau_pax_file: '{{ zoau_file_name }}.pax'
+    zoau_install_dir: '{{ ZOAU }}'
+    zoau_install_fs: '{{ ZOAU }}'
+
+- name: Set up array of directories to be used for size checks
+  set_fact:
+    zoau_install_dirs:
+      - "{{ zoau_pax_dir }}"
+      - "{{ zoau_install_fs }}"
+
+- name: Create zoau_install_fs directory
+  raw: "mkdir -p {{ zoau_install_fs }}"
+
+- name: Group tasks when zoau directory not present
+  block:
+  - name: "Get file system for {{ zoau_pax_dir }}"
+    raw: "df -k {{ zoau_pax_dir }} | tail -1 | awk ' { print $1; }'" 
+    register: zoau_pax_dir_fs
+
+  - name: "Get file system for {{ zoau_install_fs }}"
+    raw: "df -k {{ zoau_install_fs }} | tail -1 | awk ' { print $1; }'" 
+    register: zoau_install_fs
+
+  - name: "Get required free space if file system different"
+    set_fact:
+      total_free_space: "{{ zoau_space }}"
+
+  - name: "Double space if both directories in the same file system"
+    set_fact:
+      total_free_space: "{{ total_free_space | int * 2 }}"
+    when: zoau_pax_dir_fs == zoau_install_fs
+
+  - name: print
+    debug:
+      var: total_free_space
+
+  - name: "Check space of {{ zoau_install_dirs }}"
+    include_tasks: dfcheck.yml 
+    loop: "{{ zoau_install_dirs }}"
+
+  - name: Create dir to store files
+    raw: mkdir -p {{ zoau_pax_dir }} {{ '; mkdir -p {0}'.format(zoau_install_fs) if zoau_install_fs != zoau_pax_dir else ''}}
+
+  - name: Copy install files to z/OS USS
+    shell: "{{ sftp_path }} {{ ansible_user }}@{{ ansible_host }}:{{ zoau_pax_dir }} <<< $'put {{ pkg_path }}/{{ zoau_pax_file }}'"
+    delegate_to: localhost
+
+  - name: Extract directory of files
+    raw: '(cd {{ zoau_install_dir }}; /bin/pax -p e -r -f {{ zoau_pax_dir }}/{{ zoau_pax_file }} )'
+
+  - name: Clean up pax file
+    raw: rm {{ zoau_pax_dir }}/{{ zoau_file_name }}.pax
+
+  when: zoaudir.rc > 0
+
+- name: How to use ZOAU
+  debug:
+    msg: [
+         "IBM Z Open Automation Utilities installed at {{ ZOAU }} ",
+         "Add {{ ZOAU }}\/bin to your PATH and add {{ ZOAU }}\/lib to your LIBPATH to run"
+    ]
+

@@ -12,7 +12,7 @@ sftp_path: /usr/bin/sftp {{ansible_sftp_extra_args}}
 # Locations where languages and tools will be installed
 ################################################################################
 PYZ: "/usr/lpp/IBM/cyp/v3r8/pyz"
-ZOAU: "/usr/lpp/IBM/zoautil"
+ZOAU: "/usr/lpp/IBM/zoau/v1r3"
 
 ################################################################################
 # Playbook enviroment variables

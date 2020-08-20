@@ -1,0 +1,12 @@
+---
+# defaults file for deploy-zoau
+
+# the default directory to upload the zoau pax file to
+zoau_pax_dir: /tmp
+
+# the default zoau file name
+zoau_file_name: zoau-1.0.3
+
+# the space required for the temporary pax file or unpacked files
+# (if both are in the same file system, this will be doubled)
+zoau_space: 10000
