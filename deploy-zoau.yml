@@ -1,0 +1,6 @@
+- name: Deploy ZOAU (Z Open Automation Utilities) to system
+  hosts: zsystem
+  gather_facts: false
+
+  roles:
+    - deploy-zoau
