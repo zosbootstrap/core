@@ -5,8 +5,11 @@
 #
 pkg_path: "/var/zostools"
 
+# the path to sftp on Ansible host
+sftp_path: /usr/bin/sftp {{ansible_sftp_extra_args}}
+
 ################################################################################
-# Configure dependency installations
+# Locations where languages and tools will be installed
 ################################################################################
 PYZ: "/usr/lpp/IBM/cyp/v3r8/pyz"
 ZOAU: "/usr/lpp/IBM/zoautil"
