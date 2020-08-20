@@ -15,4 +15,8 @@ This repository provides Ansible code to:
 - upload curl
 - upload IBM ZOAU
 
-My thanks to the members of the IBM Ansible team, especially Blake Becker and Bryant Panyarachun who answered numerous questions as well as Asif Mahmud, and Omar Elbarmawi for their base code samples I was able to leverage to bootstrap myself.
+Appreciation
+------------
+
+My thanks to the members of the IBM Ansible team, especially Blake Becker who answered numerous questions and Bryant Panyarachun, Asif Mahmud, and Omar Elbarmawi for their base code samples I was able to leverage to bootstrap myself.
+
