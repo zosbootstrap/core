@@ -1,0 +1,6 @@
+- name: Deploy Rocket ported tools to z/OS
+  hosts: zsystem
+  gather_facts: false
+
+  roles:
+    - deploy-rocket

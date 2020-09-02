@@ -1,0 +1,5 @@
+---
+# tasks file for deploy-profile
+
+- name: Copy into file on the host
+  raw: "echo '{{ profile_text }}' > ~/.profile"

@@ -1,0 +1,6 @@
+- name: Deploy Profile to z/OS system
+  hosts: zsystem
+  gather_facts: false
+
+  roles:
+    - deploy-profile
