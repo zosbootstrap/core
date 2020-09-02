@@ -5,8 +5,10 @@ zsystem:
       ansible_port: 8122
       ansible_sftp_extra_args: "-P 8122"
       ansible_user: ibmuser
+      ansible_python_interpreter: /usr/lpp/IBM/cyp/v3r8/pyz/bin/python3
     build:
       ansible_host: torzdt1.canlab.ibm.com
       ansible_port: 7022
       ansible_sftp_extra_args: "-P 7022"
       ansible_user: ibmuser
+      ansible_python_interpreter: /usr/lpp/IBM/cyp/v3r8/pyz/bin/python3

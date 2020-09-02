@@ -1,0 +1,104 @@
+---
+# tasks file for deploy-rocket
+
+- name: Determine if Rocket Tools installed already
+  raw: ls {{ ROCKET }}/bin 
+  register: rocketdir
+  ignore_errors: True
+
+- name: Derive rocket_install_dir from ROCKET
+  set_fact:
+    rocket_install_dir: '{{ ROCKET }}'
+    rocket_install_fs: '{{ ROCKET }}'
+
+- name: Set up array of directories to be used for size checks
+  set_fact:
+    rocket_install_dirs:
+      - "{{ rocket_pax_dir }}"
+      - "{{ rocket_install_fs }}"
+
+- name: Create rocket_install_fs directory
+  raw: "mkdir -p {{ rocket_install_fs }}"
+
+- name: Group tasks when rocket directory not present
+  block:
+  - name: "Get file system for {{ rocket_pax_dir }}"
+    raw: "df -k {{ rocket_pax_dir }} | tail -1 | awk ' { print $1; }'" 
+    register: rocket_pax_dir_fs
+
+  - name: "Get file system for {{ rocket_install_fs }}"
+    raw: "df -k {{ rocket_install_fs }} | tail -1 | awk ' { print $1; }'" 
+    register: rocket_install_fs
+
+  - name: "Get required free space if file system different"
+    set_fact:
+      total_free_space: "{{ rocket_space }}"
+
+  - name: "Double space if both directories in the same file system"
+    set_fact:
+      total_free_space: "{{ total_free_space | int * 2 }}"
+    when: rocket_pax_dir_fs == rocket_install_fs
+
+  - name: print
+    debug:
+      var: total_free_space
+
+  - name: "Check space of {{ rocket_install_dirs }}"
+    include_tasks: dfcheck.yml 
+    loop: "{{ rocket_install_dirs }}"
+
+  - name: Create dir to store files
+    raw: mkdir -p {{ rocket_pax_dir }} {{ '; mkdir -p {0}'.format(rocket_install_fs) if rocket_install_fs != rocket_pax_dir else ''}}
+
+  - name: set up names of files
+    set_fact:
+      gzip_file_name: 'gzip-1.6-edc_b0005.160229.tar'
+      unzip_file_name: 'unzip-6.0_b0006.161123.tar.gz'
+      bash_file_name: 'bash-4.3_b018.170518.tar.gz'
+      git_file_name: 'git-2.14.4_b11.190917.tar.gz'
+
+  - name: set up array of files to send to host
+    set_fact:
+      gzip_files:
+        - "{{ unzip_file_name }}"
+        - "{{ bash_file_name }}"
+        - "{{ git_file_name }}"
+      pkg_files: 
+        - "{{ gzip_file_name }}"
+
+  - name: append gzip_files to pkg_files
+    set_fact:
+      pkg_files: "{{ pkg_files + [item] }}"
+    with_items:
+      - "{{ gzip_files }}" 
+
+  - name: Copy install files to z/OS USS
+    shell: "{{ sftp_path }} {{ ansible_user }}@{{ ansible_host }}:{{ rocket_pax_dir }} <<< $'put {{ pkg_path }}/{{ item }}'"
+    delegate_to: localhost
+    loop: "{{ pkg_files }}"
+
+  - name: Extract tar
+    raw: '/bin/tar -xf {{ rocket_pax_dir }}/{{ gzip_file_name }} -C {{ rocket_install_dir }}'
+
+  - name: Remove old tar files (before)
+    raw: 'rm -f {{ rocket_pax_dir }}/*.tar'
+
+  - name: Extract zip files
+    raw: '(cd {{ rocket_install_dir }}; {{ rocket_install_dir }}/bin/gzip -d {{ rocket_pax_dir }}/{{ item }} )'
+    loop: "{{ gzip_files }}"
+
+  - name: Untar files
+    raw: 'for f in {{ rocket_pax_dir }}/*.tar; do /bin/tar -xoUXf $f -C {{ rocket_install_dir }}; done'
+
+  - name: Remove old tar files (after)
+    raw: 'rm -f {{ rocket_pax_dir }}/*.tar'
+
+  when: rocketdir.rc > 0
+
+- name: How to use ROCKET
+  debug:
+    msg: [
+         "Rocket ported tools installed at {{ ROCKET }} ",
+         "Add {{ ROCKET }}\/bin to your PATH and add {{ ROCKET }}\/lib to your LIBPATH to run"
+    ]
+
