@@ -1,15 +1,19 @@
 ---
 # defaults file for deploy-rocket
+profile_text: |
+  export _BPXK_AUTOCVT="ON"
+  export ZOAU=/usr/lpp/IBM/zoau/v1r3
+  export PYZ=/usr/lpp/IBM/cyp/v3r8/pyz
+  export ROCKET=/usr/lpp/Rocket
+  export ZOAU_HOME="${ZOAU}"
+  export PYTHONPATH="${ZOAU}/lib"
+  export LIBPATH="${ZOAU}/lib:${PYZ}/lib:/lib:/usr/lib:."
+  export PATH="${ZOAU}/bin:${PYZ}/bin:${ROCKET}/bin:/bin:/var/bin"
+  export _CEE_RUNOPTS="FILETAG(AUTOCVT,AUTOTAG) POSIX(ON)"
+  export _TAG_REDIR_ERR="txt"
+  export _TAG_REDIR_IN="txt"
+  export _TAG_REDIR_OUT="txt"
+  export LANG="C"
 
-# the default directory to upload the rocket pax file to
-rocket_pax_dir: /tmp
-
-# the default rocket file names
-gzip_file_name: gzip-1.6-edc_b0005.160229
-unzip_file_name: unzip-6.0_b0006.161123
-bash_file_name: bash-4.3_b018.170518
-git_file_name: git-2.14.4_b11.190917
-
-# the space required for the temporary zip/tar files or unpacked files
-# (if both are in the same file system, this will be doubled)
-rocket_space: 10000
+  export TERM=xterm
+  set -o emacs

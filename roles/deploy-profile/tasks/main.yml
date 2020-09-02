@@ -1,17 +1,5 @@
 ---
 # tasks file for deploy-profile
-  export _BPXK_AUTOCVT="ON"
-  export ZOAU=/usr/lpp/IBM/zoau/v1r3
-  export PYZ=/usr/lpp/IBM/cyp/v3r8/pyz
-  export ZOAU_HOME="${ZOAU}"
-  export PYTHONPATH="${ZOAU}/lib"
-  export LIBPATH="${ZOAU}/lib:${PYZ}/lib:/lib:/usr/lib:."
-  export PATH="${ZOAU}/bin:${PYZ}/bin:/bin:/var/bin"
-  export _CEE_RUNOPTS="FILETAG(AUTOCVT,AUTOTAG) POSIX(ON)"
-  export _TAG_REDIR_ERR="txt"
-  export _TAG_REDIR_IN="txt"
-  export _TAG_REDIR_OUT="txt"
-  export LANG="C"
 
-  export TERM=xterm
-  set -o emacs
+- name: Copy into file on the host
+  raw: "echo '{{ profile_text }}' > ~/.profile"
