@@ -2,10 +2,9 @@
 # tasks file for deploy-zoau
 
 - name: Determine if zoau installed already
-  raw: ls {{ ZOAU }}/bin 
+  stat: 
+    path: "{{ ZOAU }}/bin"
   register: zoaudir
-  ignore_errors: True
-  no_log: True
 
 - name: Derive zoau_install_dir from ZOAU
   set_fact:
@@ -62,7 +61,7 @@
   - name: Clean up pax file
     raw: rm {{ zoau_pax_dir }}/{{ zoau_file_name }}.pax
 
-  when: zoaudir.rc > 0
+  when: not zoaudir.stat.exists
 
 - name: How to use ZOAU
   debug:

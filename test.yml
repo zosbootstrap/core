@@ -1,0 +1,9 @@
+- name: Deploy Profile to z/OS system
+  hosts: zsystem
+  gather_facts: false
+
+  tasks:
+    - name: test
+      stat: 
+        path: /usr/notthere
+      register: result

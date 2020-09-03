@@ -2,10 +2,9 @@
 # tasks file for deploy-rocket
 
 - name: Determine if Rocket Tools installed already
-  raw: ls {{ ROCKET }}/bin 
+  stat: 
+    path: "{{ ROCKET }}/bin"
   register: rocketdir
-  ignore_errors: True
-  no_log: True
 
 - name: Derive rocket_install_dir from ROCKET
   set_fact:
@@ -96,7 +95,7 @@
   - name: Remove old tar files (after)
     raw: 'rm -f {{ rocket_pax_dir }}/*.tar'
 
-  when: rocketdir.rc > 0
+  when: not rocketdir.stat.exists
 
 - name: How to use ROCKET
   debug:
