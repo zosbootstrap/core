@@ -5,6 +5,7 @@
   raw: ls {{ PYZ }}/bin 
   register: pythondir
   ignore_errors: True
+  no_log: True
 
 - name: Derive python_install_dir from PYZ
   set_fact:

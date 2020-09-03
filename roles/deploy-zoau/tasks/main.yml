@@ -5,6 +5,7 @@
   raw: ls {{ ZOAU }}/bin 
   register: zoaudir
   ignore_errors: True
+  no_log: True
 
 - name: Derive zoau_install_dir from ZOAU
   set_fact:

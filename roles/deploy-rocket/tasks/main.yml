@@ -5,6 +5,7 @@
   raw: ls {{ ROCKET }}/bin 
   register: rocketdir
   ignore_errors: True
+  no_log: True
 
 - name: Derive rocket_install_dir from ROCKET
   set_fact:
