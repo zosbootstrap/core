@@ -49,7 +49,7 @@
     loop: "{{ zoau_install_dirs }}"
 
   - name: Create dir to store files
-    raw: mkdir -p {{ zoau_pax_dir }} {{ '; mkdir -p {0}'.format(zoau_install_fs) if zoau_install_fs != zoau_pax_dir else ''}}
+    raw: mkdir -p {{ zoau_pax_dir }}
 
   - name: Copy install files to z/OS USS
     shell: "{{ sftp_path }} {{ ansible_user }}@{{ ansible_host }}:{{ zoau_pax_dir }} <<< $'put {{ pkg_path }}/{{ zoau_pax_file }}'"

@@ -48,7 +48,7 @@
     loop: "{{ rocket_install_dirs }}"
 
   - name: Create dir to store files
-    raw: mkdir -p {{ rocket_pax_dir }} {{ '; mkdir -p {0}'.format(rocket_install_fs) if rocket_install_fs != rocket_pax_dir else ''}}
+    raw: mkdir -p {{ rocket_pax_dir }}
 
   - name: set up names of files
     set_fact:
