@@ -49,7 +49,7 @@
     loop: "{{ python_install_dirs }}"
 
   - name: Create dir to store files
-    raw: mkdir -p {{ python_pax_dir }} {{ '; mkdir -p {0}'.format(python_install_fs) if python_install_fs != python_pax_dir else ''}}
+    raw: mkdir -p {{ python_pax_dir }}
 
   - name: Copy install files to z/OS USS
     shell: "{{ sftp_path }} {{ ansible_user }}@{{ ansible_host }}:{{ python_pax_dir }} <<< $'put {{ pkg_path }}/{{ python_pax_file }}'"

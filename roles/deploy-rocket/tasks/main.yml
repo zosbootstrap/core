@@ -48,7 +48,7 @@
     loop: "{{ rocket_install_dirs }}"
 
   - name: Create dir to store files
-    raw: mkdir -p {{ rocket_pax_dir }} {{ '; mkdir -p {0}'.format(rocket_install_fs) if rocket_install_fs != rocket_pax_dir else ''}}
+    raw: mkdir -p {{ rocket_pax_dir }}
 
   - name: set up names of files
     set_fact:
@@ -56,6 +56,7 @@
       unzip_file_name: 'unzip-6.0_b0006.161123.tar.gz'
       bash_file_name: 'bash-4.3_b018.170518.tar.gz'
       git_file_name: 'git-2.14.4_b11.190917.tar.gz'
+      curl_file_name: 'curl-7.66.0_b001.191101.tar.gz'
 
   - name: set up array of files to send to host
     set_fact:
@@ -63,6 +64,7 @@
         - "{{ unzip_file_name }}"
         - "{{ bash_file_name }}"
         - "{{ git_file_name }}"
+        - "{{ curl_file_name }}"
       pkg_files: 
         - "{{ gzip_file_name }}"
 

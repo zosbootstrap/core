@@ -8,12 +8,18 @@ profile_text: |
   export ZOAU_HOME="${ZOAU}"
   export PYTHONPATH="${ZOAU}/lib"
   export LIBPATH="${ZOAU}/lib:${PYZ}/lib:/lib:/usr/lib:."
-  export PATH="${ZOAU}/bin:${PYZ}/bin:${ROCKET}/bin:/bin:/var/bin"
+  export PATH="${HOME}/bin:${ZOAU}/bin:${PYZ}/bin:${ROCKET}/bin:/bin:/var/bin"
   export _CEE_RUNOPTS="FILETAG(AUTOCVT,AUTOTAG) POSIX(ON)"
   export _TAG_REDIR_ERR="txt"
   export _TAG_REDIR_IN="txt"
   export _TAG_REDIR_OUT="txt"
   export LANG="C"
+  export GIT_SHELL=${TOOLS_ROOT}/bin/bash
+  export GIT_EXEC_PATH=${TOOLS_ROOT}/libexec/git-core
+  export GIT_TEMPLATE_DIR=${TOOLS_ROOT}/share/git-core/templates
+  git config --global core.editor "/bin/vi -W filecodeset=ISO8859-1" 
+  git config --global user.name "Mike Fulton"
+  git config --global user.email mikefultonpersonal@gmail.com
 
   export TERM=xterm
   set -o emacs
