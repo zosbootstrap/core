@@ -18,16 +18,18 @@
       - "{{ rocket_install_fs }}"
 
 - name: Create rocket_install_fs directory
-  raw: "mkdir -p {{ rocket_install_fs }}"
+  file:
+    path: "{{ rocket_install_fs }}"
+    state: directory
 
 - name: Group tasks when rocket directory not present
   block:
   - name: "Get file system for {{ rocket_pax_dir }}"
-    raw: "df -k {{ rocket_pax_dir }} | tail -1 | awk ' { print $1; }'" 
+    shell: "df -k {{ rocket_pax_dir }} | tail -1 | awk ' { print $1; }'" 
     register: rocket_pax_dir_fs
 
   - name: "Get file system for {{ rocket_install_fs }}"
-    raw: "df -k {{ rocket_install_fs }} | tail -1 | awk ' { print $1; }'" 
+    shell: "df -k {{ rocket_install_fs }} | tail -1 | awk ' { print $1; }'" 
     register: rocket_install_fs
 
   - name: "Get required free space if file system different"
@@ -48,7 +50,9 @@
     loop: "{{ rocket_install_dirs }}"
 
   - name: Create dir to store files
-    raw: mkdir -p {{ rocket_pax_dir }}
+    file:
+      path: "{{ rocket_pax_dir }}"
+      state: directory
 
   - name: set up names of files
     set_fact:
@@ -79,21 +83,39 @@
     delegate_to: localhost
     loop: "{{ pkg_files }}"
 
+#
+# unarchive can not be used for 'tar' because our system does not have a /bin/unzip
+# unarchive can not be used for 'gz' files because unarchive does not support gz files
+
   - name: Extract tar
-    raw: '/bin/tar -xf {{ rocket_pax_dir }}/{{ gzip_file_name }} -C {{ rocket_install_dir }}'
+    command: 
+      cmd: '/bin/tar -xf {{ rocket_pax_dir }}/{{ gzip_file_name }} -C {{ rocket_install_dir }}'
+      warn: no
 
   - name: Remove old tar files (before)
     raw: 'rm -f {{ rocket_pax_dir }}/*.tar'
 
   - name: Extract zip files
-    raw: '(cd {{ rocket_install_dir }}; {{ rocket_install_dir }}/bin/gzip -d {{ rocket_pax_dir }}/{{ item }} )'
+    shell: '(cd {{ rocket_install_dir }}; {{ rocket_install_dir }}/bin/gzip -d {{ rocket_pax_dir }}/{{ item }} )'
     loop: "{{ gzip_files }}"
 
+  - name: Files to untar
+    find:
+      paths: "{{rocket_pax_dir }}"
+      patterns: "*.tar"
+    register: files_to_untar
+
   - name: Untar files
-    raw: 'for f in {{ rocket_pax_dir }}/*.tar; do /bin/tar -xoUXf $f -C {{ rocket_install_dir }}; done'
+    command: 
+      cmd: '/bin/tar -xoUXf {{ item.path }} -C {{ rocket_install_dir }}'
+      warn: no
+    with_items: "{{ files_to_untar.files }}"
 
   - name: Remove old tar files (after)
-    raw: 'rm -f {{ rocket_pax_dir }}/*.tar'
+    file:
+      path: "{{ item.path }}"
+      state: absent
+    with_items: "{{ files_to_untar.files }}"
 
   when: not rocketdir.stat.exists
 
