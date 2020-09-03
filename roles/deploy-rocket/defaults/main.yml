@@ -12,4 +12,4 @@ git_file_name: git-2.14.4_b11.190917
 
 # the space required for the temporary zip/tar files or unpacked files
 # (if both are in the same file system, this will be doubled)
-rocket_space: 10000
+rocket_space: 50000
