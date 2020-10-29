@@ -5,7 +5,7 @@
 zoau_pax_dir: /tmp
 
 # the default zoau file name
-zoau_file_name: zoau-1.0.3
+zoau_file_name: zoau-1.1.0
 
 # the space required for the temporary pax file or unpacked files
 # (if both are in the same file system, this will be doubled)

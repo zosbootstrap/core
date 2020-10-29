@@ -12,6 +12,6 @@ sftp_path: /usr/bin/sftp {{ansible_sftp_extra_args}}
 # Locations where languages and tools will be installed
 ################################################################################
 PYZ: "/usr/lpp/IBM/cyp/v3r8/pyz"
-ZOAU: "/usr/lpp/IBM/zoau/v1r3"
+ZOAU: "/usr/lpp/IBM/zoau/v1r1m0"
 ROCKET: "/usr/lpp/Rocket"
 

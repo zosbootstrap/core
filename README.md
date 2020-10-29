@@ -15,6 +15,12 @@ This repository provides Ansible code to:
 - upload curl
 - upload IBM ZOAU
 
+Sample Invocation
+-------------
+
+To update all systems with the latest software:
+ansible-playbook -i inventories/zsystem.yml deploy-rocket.yml
+
 Appreciation
 ------------
 

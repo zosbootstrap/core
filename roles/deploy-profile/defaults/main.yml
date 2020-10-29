@@ -2,7 +2,7 @@
 # defaults file for deploy-rocket
 profile_text: |
   export _BPXK_AUTOCVT="ON"
-  export ZOAU=/usr/lpp/IBM/zoau/v1r3
+  export ZOAU=/usr/lpp/IBM/zoau/v1r1m0
   export PYZ=/usr/lpp/IBM/cyp/v3r8/pyz
   export ROCKET=/usr/lpp/Rocket
   export ZOAU_HOME="${ZOAU}"
